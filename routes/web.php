@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ModerationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TagController;
@@ -26,3 +27,10 @@ Route::apiResource('api/posts', PostController::class);
 Route::post('api/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
 Route::apiResource('api/categories', CategoryController::class);
 Route::apiResource('api/tags', TagController::class);
+
+Route::prefix('moderation')->name('moderation.')->middleware(['auth'])->group(function () {
+    Route::get('posts', [ModerationController::class, 'indexPosts'])->name('posts.index');
+    Route::get('comments', [ModerationController::class, 'indexComments'])->name('comments.index');
+    Route::post('{moderation}/decline', [ModerationController::class, 'decline'])->name('decline');
+    Route::post('{moderation}/accept', [ModerationController::class, 'accept'])->name('accept');
+});

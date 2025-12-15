@@ -45,6 +45,10 @@ class PostController extends Controller
             $post->tags()->attach($validated['tags']);
         }
 
+        if ($post->status === 'published') {
+            $post->moderations()->create(['status' => 'wait']);
+        }
+
         return new PostResource($post->load(['category', 'tags']));
     }
 
@@ -77,6 +81,10 @@ class PostController extends Controller
             $post->tags()->sync($validated['tags']);
         }
 
+        if ($post->wasChanged('status') && $post->status === 'published') {
+            $post->moderations()->create(['status' => 'wait']);
+        }
+
         return new PostResource($post->load(['category', 'tags']));
     }
 
@@ -88,7 +96,6 @@ class PostController extends Controller
 
     public function like(Post $post): JsonResource
     {
-        //Поставить лайк
         $post->increment('likes');
         return new PostResource($post);
     }

@@ -47,4 +47,9 @@ class Post extends Model
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
+
+    public function moderations(): MorphMany
+    {
+        return $this->morphMany(Moderation::class, 'moderatable');
+    }
 }
