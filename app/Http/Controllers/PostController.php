@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\Post\PostCreatedEvent;
 use App\Events\Post\PostDeletedEvent;
 use App\Events\Post\PostLikedEvent;
+use App\Events\Post\PostPublishedEvent;
 use App\Events\Post\PostUpdatedEvent;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
@@ -44,6 +45,7 @@ class PostController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
             'status' => ['sometimes', 'string', Rule::in(['scheduled', 'published', 'declined'])],
+            'published_at' => 'nullable|date',
         ]);
 
         $post = $request->user()->posts()->create($validated);
@@ -53,6 +55,10 @@ class PostController extends Controller
         }
 
         $this->eventNotifierService->makeEvent(new PostCreatedEvent($post));
+
+        if ($post->status === 'published') {
+            $this->eventNotifierService->makeEvent(new PostPublishedEvent($post));
+        }
 
         return new PostResource($post->load(['category', 'tags']));
     }
@@ -78,6 +84,7 @@ class PostController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
             'status' => ['sometimes', 'string', Rule::in(['scheduled', 'published', 'declined'])],
+            'published_at' => 'nullable|date',
         ]);
 
         $post->update($validated);
