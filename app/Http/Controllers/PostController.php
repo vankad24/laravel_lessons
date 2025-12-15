@@ -89,7 +89,7 @@ class PostController extends Controller
         $this->eventNotifierService->makeEvent(new PostUpdatedEvent($post));
 
         if ($post->wasChanged('status') && $post->status === 'published') {
-            $this->eventNotifierService->makeEvent(new PostCreatedEvent($post));
+            $this->eventNotifierService->makeEvent(new PostPublishedEvent($post));
         }
 
 
