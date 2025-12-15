@@ -17,16 +17,20 @@ class Post extends Model
         'title',
         'content',
         'category_id',
-        'is_published',
-    ];
-
-    protected $casts = [
-        'is_published' => 'boolean',
+        'user_id',
+        'status',
+        'views',
+        'likes',
     ];
 
     public function scopePublished($query)
     {
-        return $query->where('is_published', true);
+        return $query->where('status', 'published');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function category(): BelongsTo

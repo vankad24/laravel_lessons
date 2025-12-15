@@ -7,18 +7,24 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse; // Добавлено
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
-    public function index(): JsonResponse // Изменен тип возвращаемого значения
+    public function __construct()
+    {
+        $this->authorizeResource(Post::class, 'post');
+    }
+
+    public function index(): JsonResponse
     {
         $posts = Post::published()->with(['category', 'tags'])->get();
-        return response()->json( // Явный возврат JsonResponse
+        return response()->json(
             PostResource::collection($posts),
-            200, // HTTP статус
-            [],  // Заголовки
-            JSON_UNESCAPED_UNICODE // Флаг для json_encode
+            200,
+            [],
+            JSON_UNESCAPED_UNICODE
         );
     }
 
@@ -30,10 +36,10 @@ class PostController extends Controller
             'category_id' => 'required|exists:categories,id',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
-            'is_published' => 'sometimes|boolean',
+            'status' => ['sometimes', 'string', Rule::in(['scheduled', 'published', 'declined'])],
         ]);
 
-        $post = Post::create($validated);
+        $post = $request->user()->posts()->create($validated);
 
         if (isset($validated['tags'])) {
             $post->tags()->attach($validated['tags']);
@@ -44,6 +50,8 @@ class PostController extends Controller
 
     public function show(Post $post): JsonResponse
     {
+        $post->increment('views');
+
         return response()->json(
             new PostResource($post->load(['category', 'tags', 'comments'])),
             200,
@@ -60,7 +68,7 @@ class PostController extends Controller
             'category_id' => 'sometimes|required|exists:categories,id',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
-            'is_published' => 'sometimes|boolean',
+            'status' => ['sometimes', 'string', Rule::in(['scheduled', 'published', 'declined'])],
         ]);
 
         $post->update($validated);
@@ -76,5 +84,12 @@ class PostController extends Controller
     {
         $post->delete();
         return response()->noContent();
+    }
+
+    public function like(Post $post): JsonResource
+    {
+        //Поставить лайк
+        $post->increment('likes');
+        return new PostResource($post);
     }
 }
