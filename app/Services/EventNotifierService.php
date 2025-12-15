@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Common\Singleton;
 use App\Events\AbstractEvent;
 use App\Events\EventType;
 
 // Singleton class
 final class EventNotifierService
 {
+    private static ?self $instance = null;
+
     /** @var array<string, callable[]> */
     private array $listeners = [];
 
@@ -18,6 +19,14 @@ final class EventNotifierService
         foreach (EventType::cases() as $case) {
             $this->listeners[$case->value] = [];
         }
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function add(EventType|string $eventType, callable $callback): void

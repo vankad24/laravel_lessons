@@ -19,16 +19,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(EventNotifierService::class);
+        $this->app->singleton(EventNotifierService::class, function ($app) {
+            return EventNotifierService::getInstance();
+        });
     }
 
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot(EventNotifierService $notifier): void
     {
-        $notifier = app(EventNotifierService::class);
-
         $notifier->add(EventType::CREATE_POST, [new CreatePostListener(), 'handle']);
         $notifier->add(EventType::UPDATE_POST, [new PostUpdatedListener(), 'handle']);
         $notifier->add(EventType::DELETE_POST, [new DeletePostListener(), 'handle']);
