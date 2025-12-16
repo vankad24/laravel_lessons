@@ -8,7 +8,8 @@
                 postId: {{ $post->id }},
                 initialComments: {{ \App\Http\Resources\CommentResource::collection($post->comments)->toJson() }},
                 isUserAuth: {{ auth()->check() ? 'true' : 'false' }},
-                loginRoute: '{{ route('login') }}'
+                loginRoute: '{{ route('login') }}',
+                profileShowBaseUrl: '{{ route('profile.show', 0) }}' // Pass 0 as a dummy parameter
             })"
             class="bg-white overflow-hidden shadow-sm sm:rounded-lg"
         >
@@ -71,12 +72,12 @@
                 <div class="mt-6 space-y-4">
                     <template x-for="comment in comments" :key="comment.id">
                         <div class="flex items-start">
-                            <a :href="'{{ route('profile.show', '') }}/' + comment.user.id">
+                            <a :href="profileShowBaseUrl.replace('0', comment.user.id)">
                                 <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
                             </a>
                             <div class="ml-3">
                                 <div class="text-sm">
-                                    <a :href="'{{ route('profile.show', '') }}/' + comment.user.id" class="font-medium text-gray-900" x-text="comment.user.name"></a>
+                                    <a :href="profileShowBaseUrl.replace('0', comment.user.id)" class="font-medium text-gray-900" x-text="comment.user.name"></a>
                                 </div>
                                 <p class="mt-1 text-gray-600" x-text="comment.body"></p>
                                 <div class="mt-1 text-xs text-gray-500" x-text="comment.created_at_human"></div>
@@ -101,7 +102,7 @@
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('commentSection', ({ postId, initialComments, isUserAuth, loginRoute }) => ({
+    Alpine.data('commentSection', ({ postId, initialComments, isUserAuth, loginRoute, profileShowBaseUrl }) => ({
         postId: postId,
         comments: initialComments,
         commentsOpen: false,

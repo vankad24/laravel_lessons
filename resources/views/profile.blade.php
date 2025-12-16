@@ -16,54 +16,54 @@
     </div>
 
     <!-- Comments on Profile -->
-    <div x-data="commentSection({
-            commentableId: {{ $user->id }},
-            commentableType: 'user',
-            initialComments: {{ \App\Http\Resources\CommentResource::collection($user->comments)->toJson() }},
-            isUserAuth: {{ auth()->check() ? 'true' : 'false' }},
-            loginRoute: '{{ route('login') }}'
-        })" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6">
-            <h3 class="text-xl font-semibold">Комментарии к профилю</h3>
-            <!-- New Comment Form -->
-            <div class="mt-4">
-                 <template x-if="isUserAuth">
-                    <form @submit.prevent="addComment">
-                        <textarea x-model="newCommentBody" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="3" placeholder="Оставить комментарий..."></textarea>
-                        <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Отправить
-                        </button>
-                    </form>
-                </template>
-                <template x-if="!isUserAuth">
-                    <p class="text-sm text-gray-500">
-                        Чтобы оставить комментарий, пожалуйста, <a :href="loginRoute" class="underline text-indigo-600">войдите</a>.
-                    </p>
-                </template>
-            </div>
-            <!-- Existing Comments -->
-            <div class="mt-6 space-y-4">
-                <template x-for="comment in comments" :key="comment.id">
-                    <div class="flex items-start">
-                        <a :href="'{{ route('profile.show', '') }}/' + comment.user.id">
-                           <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
-                        </a>
-                        <div class="ml-3">
-                            <div class="text-sm">
-                                <a :href="'{{ route('profile.show', '') }}/' + comment.user.id" class="font-medium text-gray-900" x-text="comment.user.name"></a>
+                <div x-data="commentSection({
+                commentableId: {{ $user->id }},
+                commentableType: 'user',
+                initialComments: {{ \App\Http\Resources\CommentResource::collection($user->comments)->toJson() }},
+                isUserAuth: {{ auth()->check() ? 'true' : 'false' }},
+                loginRoute: '{{ route('login') }}',
+                profileShowBaseUrl: '{{ route('profile.show', 0) }}' // Pass 0 as a dummy parameter
+            })" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6">
+                <h3 class="text-xl font-semibold">Комментарии к профилю</h3>
+                <!-- New Comment Form -->
+                <div class="mt-4">
+                     <template x-if="isUserAuth">
+                        <form @submit.prevent="addComment">
+                            <textarea x-model="newCommentBody" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="3" placeholder="Оставить комментарий..."></textarea>
+                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                Отправить
+                            </button>
+                        </form>
+                    </template>
+                    <template x-if="!isUserAuth">
+                        <p class="text-sm text-gray-500">
+                            Чтобы оставить комментарий, пожалуйста, <a :href="loginRoute" class="underline text-indigo-600">войдите</a>.
+                        </p>
+                    </template>
+                </div>
+                <!-- Existing Comments -->
+                <div class="mt-6 space-y-4">
+                    <template x-for="comment in comments" :key="comment.id">
+                        <div class="flex items-start">
+                            <a :href="profileShowBaseUrl.replace('0', comment.user.id)">
+                               <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
+                            </a>
+                            <div class="ml-3">
+                                <div class="text-sm">
+                                    <a :href="profileShowBaseUrl.replace('0', comment.user.id)" class="font-medium text-gray-900" x-text="comment.user.name"></a>
+                                </div>
+                                <p class="mt-1 text-gray-600" x-text="comment.body"></p>
+                                <div class="mt-1 text-xs text-gray-500" x-text="comment.created_at_human"></div>
                             </div>
-                            <p class="mt-1 text-gray-600" x-text="comment.body"></p>
-                            <div class="mt-1 text-xs text-gray-500" x-text="comment.created_at_human"></div>
                         </div>
-                    </div>
-                </template>
-                 <template x-if="comments.length === 0">
-                    <p class="text-gray-500">Комментариев пока нет.</p>
-                </template>
+                    </template>
+                     <template x-if="comments.length === 0">
+                        <p class="text-gray-500">Комментариев пока нет.</p>
+                    </template>
+                </div>
             </div>
         </div>
-    </div>
-
 
     <!-- User's Posts -->
     <div>
@@ -100,7 +100,7 @@
 <script>
 // This Alpine component is reusable for any comment section
 document.addEventListener('alpine:init', () => {
-    Alpine.data('commentSection', ({ commentableId, commentableType, initialComments, isUserAuth, loginRoute }) => ({
+    Alpine.data('commentSection', ({ commentableId, commentableType, initialComments, isUserAuth, loginRoute, profileShowBaseUrl }) => ({
         commentableId: commentableId,
         commentableType: commentableType,
         comments: initialComments,
