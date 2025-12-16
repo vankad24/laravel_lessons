@@ -113,9 +113,13 @@ class PostController extends Controller
         return response()->noContent();
     }
 
-    public function like(Post $post): JsonResource
+    public function like(Request $request, Post $post): JsonResource
     {
-        $post->increment('likes');
+        $request->user()->likedPosts()->toggle($post);
+        
+        $post->likes = $post->likers()->count();
+        $post->save();
+
         $this->eventNotifierService->makeEvent(new PostLikedEvent($post));
         return new PostResource($post);
     }

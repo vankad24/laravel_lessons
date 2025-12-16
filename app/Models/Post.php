@@ -57,4 +57,9 @@ class Post extends Model
     {
         return $this->morphMany(Moderation::class, 'moderatable');
     }
+
+    public function likers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_user_likes');
+    }
 }
