@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     Route::get('/liked', LikedPostsController::class)->name('liked');
-    Route::get('/moderation', ModerationPageController::class)->name('moderation.page');
+    Route::get('/moderation', ModerationPageController::class)->middleware('check_user_role')->name('moderation.page');
 });
 
 require __DIR__.'/auth.php';
