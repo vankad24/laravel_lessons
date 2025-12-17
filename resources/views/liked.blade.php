@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<x-app-layout>
 <div class="space-y-8">
     <h2 class="text-3xl font-bold text-gray-900">Понравившиеся посты</h2>
 
@@ -49,4 +47,4 @@
         {{ $posts->links() }}
     </div>
 </div>
-@endsection
+</x-app-layout>

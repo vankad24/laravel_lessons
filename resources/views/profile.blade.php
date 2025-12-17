@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<x-app-layout>
 <div class="space-y-8">
     <!-- User Profile Section -->
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -128,4 +126,4 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 </script>
-@endsection
+</x-app-layout>

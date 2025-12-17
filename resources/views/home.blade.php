@@ -1,6 +1,4 @@
-@extends('layouts.main')
-
-@section('content')
+<x-app-layout>
 <div class="space-y-8">
     @forelse ($posts as $post)
         <div 
@@ -131,4 +129,4 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 </script>
-@endsection
+</x-app-layout>
