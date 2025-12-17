@@ -29,7 +29,7 @@
                      <template x-if="isUserAuth">
                         <form @submit.prevent="addComment">
                             <textarea x-model="newCommentBody" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="3" placeholder="Оставить комментарий..."></textarea>
-                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-black font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Отправить
                             </button>
                         </form>
@@ -106,6 +106,11 @@ document.addEventListener('alpine:init', () => {
         newCommentBody: '',
         isUserAuth: isUserAuth,
         loginRoute: loginRoute,
+        profileShowBaseUrl: profileShowBaseUrl,
+
+        profileShowUrl(userId) {
+            return this.profileShowBaseUrl.replace('0', userId);
+        },
 
         addComment() {
             if (this.newCommentBody.trim() === '') return;

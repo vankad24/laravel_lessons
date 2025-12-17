@@ -22,10 +22,12 @@ class PostResource extends JsonResource
             'status' => $this->status,
             'views' => $this->views,
             'likes' => $this->likes,
+            'is_liked_by_user' => auth()->check()? $this->likers()->where('user_id', auth()->id())->exists(): false,
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'created_at' => $this->created_at->diffForHumans(),
+            'created_at_human' => $this->created_at->diffForHumans(),
             'published_at' => $this->published_at ? $this->published_at->diffForHumans() : null,
         ];
     }

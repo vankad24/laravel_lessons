@@ -113,6 +113,8 @@ class PostController extends Controller
 
         event(new PostLikedEvent($post));
 
-        return new PostResource($post);
+        return new PostResource(
+            $post->load('likers')
+        );
     }
 }
