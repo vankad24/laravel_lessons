@@ -9,7 +9,6 @@ use App\Events\Post\PostPublishedEvent;
 use App\Events\Post\PostUpdatedEvent;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Services\EventNotifierService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
@@ -18,13 +17,6 @@ use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
-    private EventNotifierService $eventNotifierService;
-    public function __construct(EventNotifierService $eventNotifierService)
-    {
-        $this->authorizeResource(Post::class, 'post');
-        $this->eventNotifierService = $eventNotifierService;
-    }
-
     public function index(): JsonResponse
     {
         $posts = Post::published()->with(['category', 'tags'])->get();
@@ -50,14 +42,14 @@ class PostController extends Controller
 
         $post = $request->user()->posts()->create($validated);
 
-        if (isset($validated['tags'])) {
+        if (!empty($validated['tags'])) {
             $post->tags()->attach($validated['tags']);
         }
 
-        $this->eventNotifierService->makeEvent(new PostCreatedEvent($post));
+        event(new PostCreatedEvent($post));
 
         if ($post->status === 'published') {
-            $this->eventNotifierService->makeEvent(new PostPublishedEvent($post));
+            event(new PostPublishedEvent($post));
         }
 
         return new PostResource($post->load(['category', 'tags']));
@@ -89,16 +81,15 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        if (isset($validated['tags'])) {
-            $post->tags()->sync($validated['tags']);
+        if (array_key_exists('tags', $validated)) {
+            $post->tags()->sync($validated['tags'] ?? []);
         }
 
-        $this->eventNotifierService->makeEvent(new PostUpdatedEvent($post));
+        event(new PostUpdatedEvent($post));
 
         if ($post->wasChanged('status') && $post->status === 'published') {
-            $this->eventNotifierService->makeEvent(new PostPublishedEvent($post));
+            event(new PostPublishedEvent($post));
         }
-
 
         return new PostResource($post->load(['category', 'tags']));
     }
@@ -108,7 +99,7 @@ class PostController extends Controller
         $post_copy = clone $post;
         $post->delete();
 
-        $this->eventNotifierService->makeEvent(new PostDeletedEvent($post_copy));
+        event(new PostDeletedEvent($post_copy));
 
         return response()->noContent();
     }
@@ -116,11 +107,12 @@ class PostController extends Controller
     public function like(Request $request, Post $post): JsonResource
     {
         $request->user()->likedPosts()->toggle($post);
-        
+
         $post->likes = $post->likers()->count();
         $post->save();
 
-        $this->eventNotifierService->makeEvent(new PostLikedEvent($post));
+        event(new PostLikedEvent($post));
+
         return new PostResource($post);
     }
 }

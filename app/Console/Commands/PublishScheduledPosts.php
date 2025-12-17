@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use App\Events\Post\PostPublishedEvent;
 use App\Models\Post;
-use App\Services\EventNotifierService;
 use Illuminate\Console\Command;
 
 class PublishScheduledPosts extends Command
@@ -23,14 +22,6 @@ class PublishScheduledPosts extends Command
      */
     protected $description = 'Publish posts that have been scheduled and their publication date has passed.';
 
-    private EventNotifierService $eventNotifierService;
-
-    public function __construct(EventNotifierService $eventNotifierService)
-    {
-        parent::__construct();
-        $this->eventNotifierService = $eventNotifierService;
-    }
-
     /**
      * Execute the console command.
      */
@@ -43,9 +34,10 @@ class PublishScheduledPosts extends Command
         $publishedCount = 0;
         foreach ($postsToPublish as $post) {
             $post->status = 'published';
+            $post->published_at = now();
             $post->save();
 
-            $this->eventNotifierService->makeEvent(new PostPublishedEvent($post));
+            event(new PostPublishedEvent($post));
             $publishedCount++;
         }
 
