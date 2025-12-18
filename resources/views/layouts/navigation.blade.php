@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('liked')" :active="request()->routeIs('liked')">
                         Понравившиеся
                     </x-nav-link>
+                    <x-nav-link href="/users/{{ Auth::user()->id }}" :active="request()->routeIs('profile.show')">
+                        Моя страница
+                    </x-nav-link>
                     @if(in_array(Auth::user()->role, ['admin', 'moderator']))
                     <x-nav-link :href="route('moderation.page')" :active="request()->routeIs('moderation.page')">
                         Модерация
