@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
+        {{-- Добавление Favicon из папки public --}}
+        <link rel="icon" href="{{ asset('favicon.svg') }}">
+
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
@@ -28,7 +31,7 @@
             @endisset
 
             <!-- Page Content -->
-            <main>
+            <main class="mx-auto w-[80%] py-8">
                 {{ $slot }}
             </main>
         </div>

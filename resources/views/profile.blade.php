@@ -4,7 +4,7 @@
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 bg-white border-b border-gray-200">
             <div class="flex items-center">
-                <img class="h-24 w-24 rounded-full object-cover" src="https://i.pravatar.cc/300?u={{ $user->id }}" alt="{{ $user->name }}">
+                <img class="h-24 w-24 rounded-full object-cover" src="{{ asset('avatar.png') }}" alt="{{ $user->name }}">
                 <div class="ml-6">
                     <h1 class="text-3xl font-bold text-gray-900">{{ $user->name }}</h1>
                     <p class="text-sm text-gray-500">Зарегистрирован {{ $user->created_at->format('d M, Y') }}</p>
@@ -45,7 +45,7 @@
                     <template x-for="comment in comments" :key="comment.id">
                         <div class="flex items-start">
                             <a :href="profileShowBaseUrl.replace('0', comment.user.id)">
-                               <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
+                               <img class="h-8 w-8 rounded-full object-cover" src="{{ asset('avatar.png') }}" :alt="comment.user.name">
                             </a>
                             <div class="ml-3">
                                 <div class="text-sm">
@@ -72,7 +72,7 @@
                      <div class="flex items-center justify-between">
                         <div class="flex items-center">
                             <a href="{{ route('profile.show', $post->user->id) }}">
-                                <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u={{ $post->user->id }}" alt="{{ $post->user->name }}">
+                                <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('avatar.png') }}" alt="{{ $post->user->name }}">
                             </a>
                             <div class="ml-4">
                                 <a href="{{ route('profile.show', $post->user->id) }}" class="text-sm font-medium text-gray-900">{{ $post->user->name }}</a>

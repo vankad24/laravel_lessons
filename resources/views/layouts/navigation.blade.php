@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-[#e6e6fa] border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -21,7 +21,7 @@
                     <x-nav-link :href="route('liked')" :active="request()->routeIs('liked')">
                         Понравившиеся
                     </x-nav-link>
-                    <x-nav-link href="/users/{{ Auth::user()->id }}" :active="request()->routeIs('profile.show')">
+                    <x-nav-link :href="route('profile.show', Auth::user()->id)" :active="request()->routeIs('profile.show')">
                         Моя страница
                     </x-nav-link>
                     @if(in_array(Auth::user()->role, ['admin', 'moderator']))
@@ -42,7 +42,7 @@
                     @endif
                 @else
                     <div class="ml-3 relative">
-                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none transition">
                             <div>{{ Auth::user()->name }}</div>
                         </a>
                     </div>

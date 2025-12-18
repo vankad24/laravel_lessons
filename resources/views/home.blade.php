@@ -13,7 +13,7 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <a :href="post.user.profile_url">
-                            <img class="h-10 w-10 rounded-full object-cover" :src="'https://i.pravatar.cc/150?u=' + post.user.id" :alt="post.user.name">
+                            <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('avatar.png') }}" :alt="post.user.name">
                         </a>
                         <div class="ml-4">
                             <a :href="post.user.profile_url" class="text-sm font-medium text-gray-900" x-text="post.user.name"></a>
@@ -38,7 +38,7 @@
                         </button>
                     </div>
                     <button @click="commentsOpen = !commentsOpen" class="focus:outline-none">
-                        <span x-text="post.comments.length"></span> Комментарии
+                        <span x-text="post.comments.length"></span> Комментариев
                     </button>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                     <template x-if="isUserAuth">
                         <form @submit.prevent="addComment">
                             <textarea x-model="newCommentBody" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="3" placeholder="Написать комментарий..."></textarea>
-                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-black bg-gray font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-100 text-black bg-gray font-semibold rounded-md hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-200">
                                 Отправить
                             </button>
                         </form>
@@ -65,9 +65,9 @@
                 <!-- Existing Comments -->
                 <div class="mt-6 space-y-4">
                     <template x-for="comment in post.comments" :key="comment.id">
-                        <div class="flex items-start">
+                        <div class="flex items-start shadow bg-white p-4 rounded-xl">
                             <a :href="comment.user.profile_url">
-                                <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
+                                <img class="h-8 w-8 rounded-full object-cover" src="{{ asset('avatar.png') }}" :alt="comment.user.name">
                             </a>
                             <div class="ml-3">
                                 <div class="text-sm">

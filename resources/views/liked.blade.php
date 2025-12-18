@@ -8,7 +8,7 @@
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
                         <a href="{{ route('profile.show', $post->user->id) }}">
-                            <img class="h-10 w-10 rounded-full object-cover" src="https://i.pravatar.cc/150?u={{ $post->user->id }}" alt="{{ $post->user->name }}">
+                            <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('avatar.png') }}" alt="{{ $post->user->name }}">
                         </a>
                         <div class="ml-4">
                             <a href="{{ route('profile.show', $post->user->id) }}" class="text-sm font-medium text-gray-900">{{ $post->user->name }}</a>
