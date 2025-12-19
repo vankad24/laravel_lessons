@@ -15,6 +15,10 @@ class LikedPostsController extends Controller
             ->latest('post_user_likes.created_at')
             ->paginate(10);
 
+        foreach ($likedPosts as $post) {
+            $post->increment('views');
+        }
+        
         return view('liked', ['posts' => $likedPosts]);
     }
 }

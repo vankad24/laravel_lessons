@@ -14,6 +14,10 @@ class HomeController extends Controller
             ->latest()
             ->paginate(10);
 
+        foreach ($posts as $post) {
+            $post->increment('views');
+        }
+
         return view('home', ['posts' => $posts]);
     }
 }
