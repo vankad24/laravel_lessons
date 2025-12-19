@@ -24,5 +24,8 @@
         <template x-for="comment in comments" :key="comment.id">
             <x-comment-card />
         </template>
+        <template x-if="comments.length === 0">
+            <p class="text-gray-500">Комментариев пока нет.</p>
+        </template>
     </div>
 </div>
