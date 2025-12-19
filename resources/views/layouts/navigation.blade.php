@@ -6,9 +6,7 @@
                 <!-- Logo -->
                 <div class="px-4 shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" viewBox="0 0 32 32" height="32">
-                            <text y="26" font-size="24">🔮</text>
-                        </svg>
+                        <x-logo size="32"/>
                     </a>
                 </div>
 
