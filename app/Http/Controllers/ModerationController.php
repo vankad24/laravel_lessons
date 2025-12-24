@@ -17,7 +17,7 @@ class ModerationController extends Controller
     {
         $moderations = Moderation::where('moderatable_type', Post::class)
             ->where('status', 'wait')
-            ->with('moderatable')
+            ->with('moderatable.user')
             ->get();
 
         return response()->json($moderations);
@@ -27,7 +27,7 @@ class ModerationController extends Controller
     {
         $moderations = Moderation::where('moderatable_type', Comment::class)
             ->where('status', 'wait')
-            ->with('moderatable')
+            ->with('moderatable.user')
             ->get();
 
         return response()->json($moderations);
@@ -49,8 +49,7 @@ class ModerationController extends Controller
         // Update the related model's status
         $moderatable = $moderation->moderatable;
         if ($moderatable) {
-            $moderatable->status = 'declined'; // Assuming the model has a 'status' attribute
-            $moderatable->save();
+            $moderatable->delete();
         }
 
         event(new ModerationDeclinedEvent($moderation));

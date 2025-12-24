@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Comment\CommentCreatedEvent;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
@@ -28,6 +28,8 @@ class CommentController extends Controller
             'body' => $validated['body'],
             'user_id' => $request->user()->id,
         ]);
+
+        event(new CommentCreatedEvent($comment));
 
         return new CommentResource($comment->load('user'));
     }
