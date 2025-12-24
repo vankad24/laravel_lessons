@@ -32,8 +32,8 @@
         </div>
 
     <!-- User's Posts -->
-    <div>
-        <h3 class="text-2xl font-semibold my-4">Посты пользователя</h3>
+    <h3 class="text-2xl font-semibold my-4">Посты пользователя</h3>
+    <div class="space-y-8">
         @forelse ($user->posts as $post)
             <x-post-card :post="$post" />
         @empty

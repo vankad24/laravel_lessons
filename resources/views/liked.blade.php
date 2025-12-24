@@ -12,8 +12,5 @@
         </div>
     @endforelse
 
-    <div class="mt-8">
-        {{ $posts->links() }}
-    </div>
 </div>
 </x-app-layout>
