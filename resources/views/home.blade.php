@@ -1,6 +1,7 @@
 <x-app-layout>
 <div class="space-y-8">
     <!-- New Post Form -->
+    @auth
     <div class="bg-white shadow-sm sm:rounded-lg p-6" x-data="newPostForm()">
     <h2 class="text-xl font-bold mb-4">Создать новый пост</h2>
 
@@ -54,7 +55,8 @@
             Создать пост
         </button>
     </form>
-</div>
+    </div>
+    @endauth
 
 
     <!-- Posts -->
