@@ -41,17 +41,17 @@
 
                         <!-- Moderation Actions -->
                         <div class="mt-4 flex items-center space-x-4">
-                            <button @click="accept(item.id)" class="px-3 py-1 bg-green-500 text-black text-sm font-semibold rounded-md hover:bg-green-600">Принять</button>
+                            <button @click="accept(item.id)" class="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-md hover:bg-green-600">Принять</button>
 
                             <div x-data="{ open: false }">
-                                <button @click="open = true" class="px-3 py-1 bg-red-500 text-black text-sm font-semibold rounded-md hover:bg-red-600">Отклонить</button>
+                                <button @click="open = true" class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600">Отклонить</button>
                                 <div x-show="open" @click.away="open = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                                     <div class="bg-white p-6 rounded-lg shadow-xl" @click.stop>
                                         <h5 class="text-lg font-bold mb-2">Причина отклонения</h5>
                                         <textarea x-ref="declineComment" class="w-full border-gray-300 rounded-md" rows="3"></textarea>
                                         <div class="mt-4 flex justify-end space-x-2">
                                             <button @click="open = false" class="px-4 py-2 text-sm rounded-md">Отмена</button>
-                                            <button @click="decline(item.id, $refs.declineComment.value); open = false" class="px-4 py-2 bg-red-600 text-black text-sm rounded-md">Подтвердить</button>
+                                            <button @click="decline(item.id, $refs.declineComment.value); open = false" class="px-4 py-2 bg-red-600 text-white text-sm rounded-md">Подтвердить</button>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@ document.addEventListener('alpine:init', () => {
 
         decline(moderationId, reason) {
             if (!reason || reason.trim() === '') {
-                alert('Пожалуйста, укажите причину отклонения.');
+                // Optionally, could set a local error state here to show a message in the UI
                 return;
             }
             axios.post(`/moderation/${moderationId}/decline`, { comment: reason })

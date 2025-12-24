@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-[#e6e6fa] border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -6,9 +6,7 @@
                 <!-- Logo -->
                 <div class="px-4 shrink-0 flex items-center">
                     <a href="{{ route('home') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" viewBox="0 0 32 32" height="32">
-                            <text y="26" font-size="24">🔮</text>
-                        </svg>
+                        <x-logo size="32"/>
                     </a>
                 </div>
 
@@ -20,6 +18,9 @@
                     @auth
                     <x-nav-link :href="route('liked')" :active="request()->routeIs('liked')">
                         Понравившиеся
+                    </x-nav-link>
+                    <x-nav-link :href="route('profile.show', Auth::user()->id)" :active="request()->routeIs('profile.show')">
+                        Моя страница
                     </x-nav-link>
                     @if(in_array(Auth::user()->role, ['admin', 'moderator']))
                     <x-nav-link :href="route('moderation.page')" :active="request()->routeIs('moderation.page')">
@@ -39,7 +40,7 @@
                     @endif
                 @else
                     <div class="ml-3 relative">
-                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition">
+                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none transition">
                             <div>{{ Auth::user()->name }}</div>
                         </a>
                     </div>

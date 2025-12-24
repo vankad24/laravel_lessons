@@ -1,86 +1,67 @@
 <x-app-layout>
 <div class="space-y-8">
-    @forelse ($posts as $post)
-        <div
-            x-data="postCard({
-                post: {{ \App\Http\Resources\PostResource::make($post->load('user', 'category', 'comments.user'))->toJson() }},
-                isUserAuth: {{ auth()->check() ? 'true' : 'false' }},
-                loginRoute: '{{ route('login') }}'
-            })"
-            class="bg-white overflow-hidden shadow-sm sm:rounded-lg"
-        >
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <a :href="post.user.profile_url">
-                            <img class="h-10 w-10 rounded-full object-cover" :src="'https://i.pravatar.cc/150?u=' + post.user.id" :alt="post.user.name">
-                        </a>
-                        <div class="ml-4">
-                            <a :href="post.user.profile_url" class="text-sm font-medium text-gray-900" x-text="post.user.name"></a>
-                            <div class="text-sm text-gray-500" x-text="post.created_at_human"></div>
-                        </div>
-                    </div>
-                    <div class="text-sm text-gray-500" x-text="post.category.name"></div>
-                </div>
+    <!-- New Post Form -->
+    @auth
+    <div class="bg-white shadow-sm sm:rounded-lg p-6" x-data="newPostForm()">
+    <h2 class="text-xl font-bold mb-4">Создать новый пост</h2>
 
-                <h2 class="mt-4 text-2xl font-bold text-gray-900" x-text="post.title"></h2>
-                <p class="mt-2 text-gray-600" x-html="post.content"></p>
-
-                <div class="mt-4 flex items-center justify-between text-sm text-gray-500">
-                    <div class="flex items-center space-x-4">
-                        <span class="flex items-center">
-                            <svg class="inline-block h-5 w-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                            <span x-text="post.views"></span>
-                        </span>
-                        <button @click="likePost" class="flex items-center focus:outline-none">
-                            <svg class="inline-block h-5 w-5 mr-1" :class="{'text-red-500': post.is_liked_by_user}" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            <span x-text="post.likes"></span>
-                        </button>
-                    </div>
-                    <button @click="commentsOpen = !commentsOpen" class="focus:outline-none">
-                        <span x-text="post.comments.length"></span> Комментарии
-                    </button>
-                </div>
-            </div>
-
-            <!-- Comments -->
-            <div x-show="commentsOpen" class="p-6 bg-gray-50 border-t border-gray-200">
-                <!-- New Comment Form -->
-                <div class="mt-4">
-                    <template x-if="isUserAuth">
-                        <form @submit.prevent="addComment">
-                            <textarea x-model="newCommentBody" class="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" rows="3" placeholder="Написать комментарий..."></textarea>
-                            <button type="submit" class="mt-2 px-4 py-2 bg-indigo-600 text-black bg-gray font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Отправить
-                            </button>
-                        </form>
-                    </template>
-                    <template x-if="!isUserAuth">
-                        <p class="text-sm text-gray-500">
-                            Чтобы оставить комментарий, пожалуйста, <a :href="loginRoute" class="underline text-indigo-600">войдите</a>.
-                        </p>
-                    </template>
-                </div>
-
-                <!-- Existing Comments -->
-                <div class="mt-6 space-y-4">
-                    <template x-for="comment in post.comments" :key="comment.id">
-                        <div class="flex items-start">
-                            <a :href="comment.user.profile_url">
-                                <img class="h-8 w-8 rounded-full object-cover" :src="`https://i.pravatar.cc/150?u=${comment.user.id}`" :alt="comment.user.name">
-                            </a>
-                            <div class="ml-3">
-                                <div class="text-sm">
-                                    <a :href="comment.user.profile_url" class="font-medium text-gray-900" x-text="comment.user.name"></a>
-                                </div>
-                                <p class="mt-1 text-gray-600" x-text="comment.body"></p>
-                                <div class="mt-1 text-xs text-gray-500" x-text="comment.created_at_human"></div>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </div>
+    <form @submit.prevent="submitPost">
+        <div class="mb-4">
+            <label>Заголовок</label>
+            <input type="text" x-model="title" class="w-full border p-2">
         </div>
+
+        <div class="mb-4">
+            <label>Контент</label>
+            <textarea x-model="content" class="w-full border p-2"></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label>Категория</label>
+            <select x-model="category_id" class="w-full border p-2">
+                <option value="">-- выберите --</option>
+                @foreach(\App\Models\Category::all() as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label>Теги</label>
+            <select x-model="tags" multiple class="w-full border p-2">
+                @foreach(\App\Models\Tag::all() as $tag)
+                    <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label>Статус</label>
+            <select x-model="status" class="w-full border p-2">
+                <option value="published">published</option>
+                <option value="scheduled">scheduled</option>
+            </select>
+        </div>
+
+        <div class="mb-4" x-show="status !== 'published'">
+            <label>Дата публикации</label>
+            <input type="datetime-local"
+                   x-model="published_at"
+                   class="w-full border p-2">
+        </div>
+
+
+        <button class="bg-indigo-600 text-white px-4 py-2 rounded">
+            Создать пост
+        </button>
+    </form>
+    </div>
+    @endauth
+
+
+    <!-- Posts -->
+    @forelse ($posts as $post)
+        <x-post-card :post="$post" />
     @empty
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-center text-gray-500">
@@ -89,52 +70,41 @@
         </div>
     @endforelse
 
-    <div class="mt-8">
-        {{ $posts->links() }}
-    </div>
 </div>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('postCard', ({ post, isUserAuth, loginRoute }) => ({
-        post: post,
-        commentsOpen: true,
-        newCommentBody: '',
-        isUserAuth: isUserAuth,
-        loginRoute: loginRoute,
+    Alpine.data('newPostForm', () => ({
+        title: '',
+        content: '',
+        category_id: '',
+        tags: [],
+        status: 'published',
+        published_at: null,
 
+        submitPost() {
+            const data = {
+                title: this.title,
+                content: this.content,
+                category_id: this.category_id,
+                tags: this.tags,
+                status: this.status,
+            };
 
-        addComment() {
-            if (this.newCommentBody.trim() === '') return;
-
-            axios.post('{{ route('comments.store') }}', {
-                body: this.newCommentBody,
-                commentable_id: this.post.id,
-                commentable_type: 'post'
-            })
-            .then(response => {
-                this.post.comments.unshift(response.data.data);
-                this.newCommentBody = '';
-            })
-            .catch(error => {
-                console.error('Error posting comment:', error);
-            });
-        },
-
-        likePost() {
-            if (!this.isUserAuth) {
-                window.location.href = this.loginRoute;
-                return;
+            if (this.status !== 'published') {
+                data.published_at = this.published_at;
             }
 
-            axios.post(`/api/posts/${this.post.id}/like`)
-            .then(response => {
-                this.post.likes = response.data.data.likes;
-                this.post.is_liked_by_user = response.data.data.is_liked_by_user;
-            })
-            .catch(error => {
-                console.error('Error liking post:', error);
-            });
+            axios.post(
+                '{{ route('posts.store') }}',
+                data,
+                {
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                }
+            ).then(() => window.location.reload())
+             .catch(err => console.error(err.response?.data || err));
         }
     }));
 });

@@ -53,16 +53,16 @@ class User extends Authenticatable
 
     public function posts(): HasMany
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(Post::class)->latest();
     }
 
     public function likedPosts(): BelongsToMany
     {
-        return $this->belongsToMany(Post::class, 'post_user_likes');
+        return $this->belongsToMany(Post::class, 'post_user_likes')->latest();
     }
 
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable')->latest();
     }
 }

@@ -23,6 +23,14 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/liked', LikedPostsController::class)->name('liked');
     Route::get('/moderation', ModerationPageController::class)->middleware('check_user_role')->name('moderation.page');
+
+    Route::post('api/posts', [PostController::class, 'store'])->name('posts.store');
+
+    Route::put('api/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+
+    Route::patch('api/posts/{post}', [PostController::class, 'update'])->name('posts.patch');
+
+    Route::delete('api/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 require __DIR__.'/auth.php';

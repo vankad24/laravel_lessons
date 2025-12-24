@@ -10,9 +10,6 @@ class ModerationDeclinedListener
 {
     public function handle(ModerationDeclinedEvent $event): void
     {
-        $post = $event->post;
-        $post->status = 'declined';
-        $post->save();
-        Log::info('ModerationDeclinedListener handled a ModerationDeclinedEvent.', ['moderation_id' => $event->moderation->id, 'post_id' => $post->id]);
+        Log::info('ModerationDeclinedListener handled a ModerationDeclinedEvent.', ['moderation_id' => $event->moderation->id]);
     }
 }
