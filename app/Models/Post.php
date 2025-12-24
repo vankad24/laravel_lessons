@@ -17,16 +17,25 @@ class Post extends Model
         'title',
         'content',
         'category_id',
-        'is_published',
+        'user_id',
+        'status',
+        'views',
+        'likes',
+        'published_at',
     ];
 
     protected $casts = [
-        'is_published' => 'boolean',
+        'published_at' => 'datetime',
     ];
 
     public function scopePublished($query)
     {
-        return $query->where('is_published', true);
+        return $query->where('status', 'published');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function category(): BelongsTo
@@ -41,6 +50,16 @@ class Post extends Model
 
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable')->latest();
+    }
+
+    public function moderations(): MorphMany
+    {
+        return $this->morphMany(Moderation::class, 'moderatable');
+    }
+
+    public function likers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_user_likes');
     }
 }
