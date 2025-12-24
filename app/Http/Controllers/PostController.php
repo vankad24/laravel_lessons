@@ -39,6 +39,9 @@ class PostController extends Controller
             'status' => ['sometimes', 'string', Rule::in(['scheduled', 'published', 'declined'])],
             'published_at' => 'nullable|date',
         ]);
+        if ($request->status === 'published') {
+            $validated['published_at'] = now();
+        }
 
         $post = $request->user()->posts()->create($validated);
 
